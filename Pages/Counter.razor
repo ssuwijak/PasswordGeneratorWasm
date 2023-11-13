@@ -1,0 +1,21 @@
+﻿@page "/counter"
+@using PasswordGeneratorWasm.Shared.Components
+
+<PageTitle>Counter</PageTitle>
+
+<h1>Counter</h1>
+<PwdCopy @Text="@Passwd"></PwdCopy>
+<p role="status">Current count: @currentCount</p>
+
+<button class="btn btn-primary" @onclick="IncrementCount">Click me</button>
+
+@code {
+	public string? Passwd { get; set; } = "";
+
+	private int currentCount = 0;
+
+	private void IncrementCount()
+	{
+		currentCount++;
+	}
+}

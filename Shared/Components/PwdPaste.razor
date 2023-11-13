@@ -1,0 +1,42 @@
+﻿@using System.Threading
+@using PasswordGeneratorWasm.Shared.Clipboard.Meziantou
+
+@namespace PasswordGeneratorWasm.Shared.Components
+
+@inject ClipboardService clipboard
+
+<h3>Check Clipboard</h3>
+
+<input type="text" id="lblText" class="form-control" value="@Text" />
+
+<button id="btnPaste" class="btn btn-success mt-1" @onclick="Paste">
+	<i class="oi oi-arrow-circle-top"></i> Paste
+</button>
+
+<button id="btnClear" class="btn btn-outline-danger mt-1" @onclick="Clear">
+	<i class="oi oi-delete"></i> Clear
+</button>
+
+
+@code {
+	[Parameter]
+	public string Title { get; set; } = "PwdPaste";
+
+	public string Text { get; set; } = "";
+
+	public async Task Paste()
+	{
+		try
+		{
+			Text = await clipboard.ReadTextAsync();
+		}
+		catch (Exception ex)
+		{
+			string s = ex.Message;
+		}
+	}
+
+	public void Clear() => Text = "";
+
+
+}

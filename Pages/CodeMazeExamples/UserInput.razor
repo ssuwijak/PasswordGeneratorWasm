@@ -1,0 +1,14 @@
+﻿@page "/codemaze/userinput"
+@using PasswordGeneratorWasm.Shared.Clipboard.CodeMaze
+
+<h1>CodeMaze Clipboard</h1>
+<h3>User input Copy to Clipboard</h3>
+
+<input @bind-value="text" />
+<ClipboardC TextToCopy="@text" />
+
+<TextArea />
+
+@code {
+	string text = "";
+}

@@ -1,0 +1,67 @@
+﻿@using System.Threading
+@using PasswordGeneratorWasm.Shared.Clipboard.Meziantou
+
+@namespace PasswordGeneratorWasm.Shared.Components
+
+@implements IDisposable
+@inject ClipboardService clipboard
+
+<h3>@Title</h3>
+
+<input type="text" id="lblText1" class="form-control" readonly value="@Text" />
+<button id="btnCopy" class="btn btn-primary mt-1" @onclick="CopyToClipboard" disabled=@state.IsDisabled>
+	<i class="@state.ClassName"></i> @state.Text
+</button>
+
+@code {
+	[Parameter]
+	public string Title { get; set; } = "PwdCopy";
+
+	[Parameter]
+	public string Text { get; set; } = "";
+
+	private CancellationTokenSource cts = new();
+	private State state = new("Copy", "oi oi-clipboard");
+
+	public async Task CopyToClipboard()
+	{
+		var temp = state;
+		state = new("Copied", "oi oi-check", IsDisabled: true);
+
+		try
+		{
+			await clipboard.WriteTextAsync(Text);
+		}
+		catch (Exception ex)
+		{
+			string s = ex.Message;
+		}
+
+		await Task.Delay(TimeSpan.FromSeconds(1), cts.Token);
+
+		state = temp;
+	}
+
+	public void Dispose()
+	{
+		try
+		{
+			cts.Cancel(); // Cancel Task.Delay
+			cts.Dispose();
+		}
+		catch (Exception ex)
+		{
+			string s = ex.Message;
+		}
+	}
+
+
+	/*
+		* The 'record' statement in C# is a new feature introduced in C# 9 that
+		* allows you to define immutable data types. Records are similar to classes,
+		* but they are immutable, meaning they cannot be changed once they are created.
+		* Records are also lightweight and easy to use, making them a good choice for simple data types.
+	*/
+
+	public record State(string Text, string ClassName, bool IsDisabled = false);
+}

@@ -1,0 +1,14 @@
+﻿@page "/codemaze/singleline"
+@using PasswordGeneratorWasm.Shared.Clipboard.CodeMaze
+
+<h1>CodeMaze Clipboard</h1>
+<h3>Singe-line Copy to Clipboard</h3>
+
+<input type="text" readonly value="@text" />
+<ClipboardC TextToCopy="@text" />
+
+<TextArea />
+
+@code {
+	string text = "Some readonly text to copy";
+}

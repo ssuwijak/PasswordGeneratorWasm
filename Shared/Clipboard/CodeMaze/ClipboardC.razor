@@ -1,0 +1,16 @@
+﻿@using Cb= PasswordGeneratorWasm.Shared.Clipboard.CodeMaze
+
+@inject Cb.IClipBoardService clipboard
+
+<button @onclick="OnClick" class="btn btn-primary">Copy to Clipboard</button>
+
+@code {
+
+	[Parameter]
+	public string TextToCopy { get; set; }
+
+	public async Task OnClick()
+	{
+		await clipboard.CopyToClipBoard(TextToCopy);
+	}
+}

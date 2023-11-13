@@ -1,0 +1,110 @@
+﻿<div class="form-group">
+	<label for="lblPwd" class="form-label">Password Suggestion</label>
+	<input type="text" readonly class="form-control-plaintext" id="lblPwd" value="@Passwd">
+	<button class="btn"><i class="fa fa-star"></i>Copy</button>
+	<button class="btn" @onclick="Generate"><i class="fa fa-star"></i>Refresh</button>
+</div>
+
+<div class="form-group">
+	<label for="rngLength" class="form-label">Password Length :</label>
+	<input type="number" id="txtLength" class="form-control" @bind="@Value" @bind:event="oninput">
+	<input type="range" class="form-range" min="@Min" max="@Max" step="@Step" id="rngLength" value="@Value" @oninput="OnRangeChanged">
+</div>
+
+@code {
+	protected int _min = 0;
+	protected int _max = 100;
+	protected int _value = 0;
+	protected int _step = 1;
+	protected int _range = 0;
+
+	protected string? Passwd { get; set; } = default;
+
+	[Parameter]
+	public int Min
+	{
+		get { return _min; }
+		set
+		{
+			if (value < _max)
+			{
+				_min = value;
+				updateRange();
+			}
+		}
+	}
+
+	[Parameter]
+	public int Max
+	{
+		get { return _max; }
+		set
+		{
+			if (value > _min)
+			{
+				_max = value;
+				updateRange();
+			}
+		}
+	}
+
+	[Parameter]
+	public int Value
+	{
+		get { return _value; }
+		set
+		{
+			if (value >= _min && value <= _max)
+				_value = value;
+		}
+	}
+
+	[Parameter]
+	public int Step
+	{
+		get { return _step; }
+		set
+		{
+			if (value < 1 || value > _range)
+				_step = _range / 10;
+			else
+				_step = value;
+		}
+	}
+
+	public void updateRange() => _range = _max - _min;
+
+	private void OnRangeChanged(ChangeEventArgs e)
+	{
+		try
+		{
+			Value = int.Parse(e.Value.ToString());
+		}
+		catch (Exception ex)
+		{
+			string err = ex.Message;
+			Value = _min;
+		}
+		Generate();
+	}
+
+	public void SetValues(int min = 0, int max = 100, int value = 0, int step = 1)
+	{
+		Min = min;
+		Max = max;
+		Value = value;
+		Step = step;
+	}
+
+
+	// protected override void OnInitialized()
+	// {
+	// 	// base.OnInitialized();
+	// 	SetValues(1, 32, 14, 1);
+	// }
+
+	public void Generate()
+	{
+		Passwd = DateTime.Now.ToString("HH:mm:ss") + " ... " +Value.ToString();
+	}
+}

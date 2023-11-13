@@ -1,0 +1,16 @@
+﻿@page "/codemaze/multilines"
+@using PasswordGeneratorWasm.Shared.Clipboard.CodeMaze
+
+<h1>CodeMaze Clipboard</h1>
+<h3>Multi-line Copy to Clipboard</h3>
+
+<textarea rows="3" cols="10">@text</textarea>
+<ClipboardC TextToCopy="@text" />
+
+<TextArea />
+
+@code {
+	string text = @"This is
+a multiline
+code snippet";
+}

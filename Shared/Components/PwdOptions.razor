@@ -1,0 +1,77 @@
+﻿@namespace PasswordGeneratorWasm.Shared.Components
+
+<div>
+	@foreach (var chk in Options)
+	{
+		<div class="form-check">
+			<input class="form-check-input" type="checkbox"
+				   id="@chk.Id"
+				   disabled="@(!chk.Enabled)"
+				   value="@chk.Value"
+			@bind="@chk.Checked"
+			@bind:after="onChangeAsync">
+
+			<label class="form-check-label" for="@chk.Id">
+				@chk.Text
+			</label>
+		</div>
+	}
+</div>
+
+
+@code {
+	[Parameter]
+	public EventCallback OnChange { get; set; }
+
+	/*
+	* the checked status is 2 ways binding due to it gets commmand from both coding and user interaction.
+	* the rest properties are one way binding.
+	* @bind="@chk.Checked" and @bind event cannot be used in the same time in same control,
+	* more details is here, https://stackoverflow.com/questions/71224684/blazor-checkbox-two-way-binding-and-change-event
+	* so .NET7 adds a feature, @bind:after, to solve this issue.
+	*/
+
+	public List<MyCheckBox> Options = new List<MyCheckBox>();
+
+	protected override void OnInitialized()
+	{
+		// base.OnInitialized();
+		Options.Clear();
+		Options.Add(new MyCheckBox("chkLower", "Lowercases (abc..z)", "1"));
+		Options.Add(new MyCheckBox("chkUpper", "Uppercases (ABC..Z)", "2"));
+		Options.Add(new MyCheckBox("chkNumber", "Numbers (012..9)", "4"));
+		Options.Add(new MyCheckBox("chkSymbol", "Randomized Symbols", "8"));
+	}
+
+	public bool IsSelected => Options.Any(c => c.Checked);
+
+	public int CountSelected() => Options.Count(c => c.Checked);
+
+	protected async Task onChangeAsync()
+	{
+		// is any option checked ?
+		if (IsSelected)
+		{
+			// if some is checked, so all options must be enabled.
+
+			// traditional method.
+			// foreach (MyCheckBox c in pwdOptions)
+			// 	c.Enabled = true;
+
+			// linq method.
+			// Options.ForEach(c => c.Enabled = true);
+
+			// enable only the first option due to only it was disabled the previous time. (in else section)
+			Options[0].Enabled = true;
+		}
+		else
+		{
+			// an option must be checked at least and it cannot be changed by user also.
+			MyCheckBox c = Options[0];
+			c.Checked = true;
+			c.Enabled = false;
+		}
+
+		await OnChange.InvokeAsync();
+	}
+}
